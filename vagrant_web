@@ -1,0 +1,27 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+#Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+Vagrant.configure("2") do |config|
+
+  config.vm.define "web" do |web|
+    # Use the Chef CentOS base image
+    web.vm.box = "generic/rhel7"
+
+    # Forward the Vagrant Host port 80 to port 5150 on your workstation.
+    web.vm.network "forwarded_port", guest: 80, host: 5150
+
+    # Set up a private IP in the Vagrant Environment. Important for Multi-Host Vagrant deployments.
+    web.vm.network "private_network", ip: "192.168.10.10"
+
+    # Define the provision file.
+    #web.vm.provision :shell, :path => "web-bootstrap.sh"
+
+    # Define a folder to map for locally hosted RPM files.
+    # This is where we'll get the Oracle Instant Client files from.
+    web.vm.synced_folder "~/Vagrant/packages", "/opt/packages"
+
+    # Define a location for your local checkout of your webapp.
+    web.vm.synced_folder "~/Source/webapp", "/local/www/webapp"
+  end
+end
